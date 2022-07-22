@@ -18,17 +18,33 @@
 class Mordle {
 public:
 
+    /// First item is a guessed word, second item is response string for that guess
+    using HintPair = std::pair<std::string, std::string>;
+    /// A list of hints
+    using HintVect = std::vector<HintPair>;
+
     // -- Construction
 
-    Mordle(const std::string& word_file);
+    /// Construct from a path to a word list file
+    Mordle(const std::string_view word_file = "");
 
     // -- Methods
 
+    // - Top level operations
+
     /// Play a game of wordle in the current terminal
-    bool TerminalPlay();
+    bool TerminalPlay(std::string secret_word);
+    /// Display word statistics
+    int DisplayWordStats();
+    /// List words with optional hints to filter output
+    int ListWords(const HintVect& hints = HintVect());
 
     /// Returns total number of words in word list
     size_t GetWordListCount() const noexcept { return m_words.size(); }
+    /// Returns word size
+    size_t GetWordSize() const
+        { return m_words.empty() ? 0 : m_words[0].length(); }
+
     /// Returns a random word from the word list
     const std::string& GetRandomWord() const;
     /// Returns true if given word is in the word list
@@ -37,6 +53,11 @@ public:
     // Check a guessed word against the secret word
     bool CheckWordGuess(const std::string& secret_word, const std::string& guess_word,
         std::string& result);
+    // Determine if a word is a possible solution given a hint
+    bool CheckWordAgainstHint(const std::string& word, const HintPair& hint);
+
+    void SetNoColorMode(bool no_color) noexcept
+        { m_no_color = no_color; }
 
     // - Character result codes (res_*)
     static constexpr char res_matched = '!';    ///< Letter is in correct spot
@@ -52,8 +73,7 @@ public:
 protected:
 
     /// Display the results of a guess to standard output
-    void DisplayGuessResult(const std::string& guess, const std::string& result,
-        bool colorful = true);
+    void DisplayGuessResult(const std::string& guess, const std::string& result);
 
     /// Returns the string to use when player wins
     std::string_view GetWinExclamatory(int guess_count) const;
@@ -63,13 +83,19 @@ protected:
     /// Returns our pseudorandom number generator object
     std::mt19937& GetPrngGenerator() const noexcept { return m_prng_gen; }
 
+    /// Initialize word list from a file
+    void InitWordListFile(std::string_view word_file);
+    /// Initialize word list from internal word list
+    void InitWordListInternal();
+
     /// Data type of our word set; an ordered list of lower case words
-    using word_set = std::vector<std::string>;
+    using word_list = std::vector<std::string>;
 
 private:
 
-    word_set                m_words;            ///< Set of all words
+    word_list               m_words;            ///< Set of all words
     mutable std::mt19937    m_prng_gen;         ///< PRNG generator
+    bool                    m_no_color{false};  ///< Don't use colorized output
 };
 
 
