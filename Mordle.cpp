@@ -72,8 +72,8 @@ void Mordle::InitWordListFile(std::string_view word_file)
 }
 
 // Defined in word_list.cpp
-extern const std::string_view default_words_blob;
-extern const size_t           default_word_size;
+extern std::string_view default_words_blob;
+extern size_t           default_word_size;
 
 /// Initialize word list from internal word list
 void Mordle::InitWordListInternal()

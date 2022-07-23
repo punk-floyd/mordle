@@ -52,6 +52,7 @@ std::string_view default_words_blob =
     "aging" \
     "aglow" \
     "agony" \
+    "agora" \
     "agree" \
     "ahead" \
     "aider" \
@@ -179,6 +180,7 @@ std::string_view default_words_blob =
     "beady" \
     "beard" \
     "beast" \
+    "beech" \
     "beefy" \
     "befit" \
     "began" \
@@ -735,6 +737,7 @@ std::string_view default_words_blob =
     "fever" \
     "fewer" \
     "fiber" \
+    "fibre" \
     "ficus" \
     "field" \
     "fiend" \
@@ -1183,6 +1186,7 @@ std::string_view default_words_blob =
     "lusty" \
     "lying" \
     "lymph" \
+    "lynch" \
     "lyric" \
     "macaw" \
     "macho" \
@@ -1501,6 +1505,7 @@ std::string_view default_words_blob =
     "pulpy" \
     "pulse" \
     "punch" \
+    "pupal" \
     "pupil" \
     "puppy" \
     "puree" \
@@ -1664,6 +1669,7 @@ std::string_view default_words_blob =
     "scald" \
     "scale" \
     "scalp" \
+    "scaly" \
     "scamp" \
     "scant" \
     "scare" \
@@ -1783,6 +1789,7 @@ std::string_view default_words_blob =
     "slant" \
     "slash" \
     "slate" \
+    "slave" \
     "sleek" \
     "sleep" \
     "sleet" \
@@ -1978,6 +1985,7 @@ std::string_view default_words_blob =
     "surly" \
     "sushi" \
     "swami" \
+    "swamp" \
     "swarm" \
     "swash" \
     "swath" \
@@ -2247,6 +2255,7 @@ std::string_view default_words_blob =
     "weird" \
     "welch" \
     "welsh" \
+    "wench" \
     "whack" \
     "whale" \
     "wharf" \
@@ -2312,6 +2321,7 @@ std::string_view default_words_blob =
     "yearn" \
     "yeast" \
     "yield" \
+    "young" \
     "youth" \
     "zebra" \
     "zesty" \
