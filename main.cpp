@@ -26,7 +26,6 @@ struct ProgOpts {
     bool                list{false};            ///< --list
     bool                rules{false};           ///< --rules
     bool                player_stats{false};    ///< --player-stats
-    bool                word_stats{false};      ///< --word-stats
     bool                play{true};             ///< --play
     bool                no_color{false};        ///< --no-color
 
@@ -68,10 +67,15 @@ int main(int argc, char* argv[])
         }
         ws.SetNoColorMode(opts.no_color);
 
-        if (opts.word_stats)
-            return ws.DisplayWordStats();
         if (opts.list)
             return ws.ListWords(opts.hint_vect);
+
+        // Validate secret word length if necessary
+        auto swl = opts.secret_word.length();
+        if (swl && swl != ws.GetWordSize()) {
+            fmt::print(std::cerr, "mordle: Invalid secret word length\n");
+            return 1;
+        }
 
         ws.TerminalPlay(opts.secret_word);
     }
@@ -95,7 +99,6 @@ int ProcessCommandLine(int argc, char* argv[], ProgOpts& opts)
     bool_map["list"]         = &opts.list;
     bool_map["rules"]        = &opts.rules;
     bool_map["player-stats"] = &opts.player_stats;
-    bool_map["word-stats"]   = &opts.word_stats;
     bool_map["play"]         = &opts.play;
     bool_map["no-color"]     = &opts.no_color;
     /// Map a "string" argument to its value

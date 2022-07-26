@@ -34,8 +34,6 @@ public:
 
     /// Play a game of wordle in the current terminal
     bool TerminalPlay(std::string secret_word);
-    /// Display word statistics
-    int DisplayWordStats();
     /// List words with optional hints to filter output
     int ListWords(const HintVect& hints = HintVect());
 
@@ -72,8 +70,14 @@ public:
 
 protected:
 
+    /// Data type of our word set; an ordered list of lower case words
+    using word_list = std::vector<std::string>;
+    // Map an alphabet character to its state (res_*)
+    using GameCharMap = std::map<char, char>;
+
     /// Display the results of a guess to standard output
-    void DisplayGuessResult(const std::string& guess, const std::string& result);
+    void DisplayGuessResult(const std::string& guess, const std::string& result,
+        const GameCharMap& cmap);
 
     /// Returns the string to use when player wins
     std::string_view GetWinExclamatory(int guess_count) const;
@@ -87,9 +91,6 @@ protected:
     void InitWordListFile(std::string_view word_file);
     /// Initialize word list from internal word list
     void InitWordListInternal();
-
-    /// Data type of our word set; an ordered list of lower case words
-    using word_list = std::vector<std::string>;
 
 private:
 

@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <iostream>
 #include <fstream>
+#include <map>
 
 #include "Mordle.h"
 #include "util.h"
@@ -165,6 +166,9 @@ bool Mordle::TerminalPlay(std::string secret_word)
     constexpr int max_guesses = 6;
     int guess_number = 1;
 
+    // Map an alphabet character to its state (res_*)
+    GameCharMap char_map;
+
     std::string guess, result;
     if (secret_word.empty())
         secret_word.assign(GetRandomWord());        // Pick a random word
@@ -186,8 +190,12 @@ bool Mordle::TerminalPlay(std::string secret_word)
             continue;
         }
 
+        // Update the character map
+        for (size_t i = 0; i<guess.length(); ++i)
+            char_map[guess[i]] = result[i];
+
         // Display the guess results
-        DisplayGuessResult(guess, result);
+        DisplayGuessResult(guess, result, char_map);
 
         // Are we done?
         if (guess.compare(secret_word) == 0) {
@@ -203,23 +211,49 @@ bool Mordle::TerminalPlay(std::string secret_word)
     return false;       // Should be unreachable
 }
 
-void Mordle::DisplayGuessResult(const std::string& guess, const std::string& result)
+static fmt::color GetResFormatColor(char res)
 {
+    switch(res) {
+        case Mordle::res_matched: return static_cast<fmt::color>(Mordle::color_matched); break;
+        case Mordle::res_mislaid: return static_cast<fmt::color>(Mordle::color_mislaid); break;
+        case Mordle::res_missing: return static_cast<fmt::color>(Mordle::color_missing); break;
+        default : return fmt::color::white;
+    }
+}
+
+void Mordle::DisplayGuessResult(const std::string& guess, const std::string& result,
+    const GameCharMap& cmap)
+{
+    // Padding between hint and char map
+    constexpr int pad = 4;
+
     if (!m_no_color) {
 
         // Use colorized output
 
+        // Display the clue
         for (size_t i = 0; i<guess.length(); ++i) {
-            fmt::color c;
-            switch(result[i]) {
-                case Mordle::res_matched: c = static_cast<fmt::color>(color_matched); break;
-                case Mordle::res_mislaid: c = static_cast<fmt::color>(color_mislaid); break;
-                case Mordle::res_missing: c = static_cast<fmt::color>(color_missing); break;
-                default : c = fmt::color::white;
-            }
             fmt::print("{:^3}", fmt::styled(guess[i],
-                fmt::fg(fmt::color::white) | fmt::bg(c)));
+                fmt::fg(fmt::color::white) | fmt::bg(GetResFormatColor(result[i]))));
         }
+
+        // Display the char map
+        fmt::print("{:{}}", ' ', pad);
+        for (char c = 'a'; c <= 'z'; ++c) {
+            char ch_use = c;
+            const auto it = cmap.find(c);
+            if (it != cmap.cend()) {
+                if (it->second != res_missing) {
+                    fmt::print("{}", fmt::styled(ch_use,
+                        fmt::fg(fmt::color::white) | fmt::bg(GetResFormatColor(it->second))));
+                    continue;
+                }
+
+                ch_use = ' ';
+            }
+            fmt::print("{}", ch_use);
+        }
+
         fmt::print("\n");
     }
     else {
@@ -228,9 +262,24 @@ void Mordle::DisplayGuessResult(const std::string& guess, const std::string& res
 
         // Display guess
         for (size_t i = 0; i<guess.length(); fmt::print("{}", guess[i++]));
+        // Display char map to the right of the guess
+        fmt::print("{:{}}", ' ', pad);
+        for (char c = 'a'; c <= 'z'; ++c) {
+            const auto it = cmap.find(c);
+            char ch_out = ((it == cmap.cend()) || (it->second != res_missing)) ? c : ' ';
+            fmt::print("{}", ch_out);
+        }
         fmt::print("\n");
+
         // Display results underneath
         for (size_t i = 0; i<guess.length(); fmt::print("{}", result[i++]));
+        // Display char map codes to the right of the result codes
+        fmt::print("{:{}}", ' ', pad);
+        for (char c = 'a'; c <= 'z'; ++c) {
+            const auto it = cmap.find(c);
+            char ch_out = (it != cmap.cend()) ? it->second : ' ';
+            fmt::print("{}", ch_out);
+        }
         fmt::print("\n");
     }
 }
@@ -264,13 +313,6 @@ std::string_view Mordle::GetLoseInsult() const
     case 6:  return "Sorry, you suck.";
     default: return "You lose.";
     }
-}
-
-/// Display word statistics
-int Mordle::DisplayWordStats()
-{
-    fmt::print("MOOMOO: Implement DisplayWordStats()\n");
-    return 0;
 }
 
 /// List words with optional hints to filter output
@@ -329,15 +371,25 @@ int Mordle::ListWords(const HintVect& hints)
 // Determine if a word is a possible solution given a hint
 bool Mordle::CheckWordAgainstHint(const std::string& word, const HintPair& hint)
 {
+    size_t c, ws = GetWordSize();
+
     const std::string& hword = hint.first;
     const std::string& hres  = hint.second;
     const auto npos = std::string::npos;
 
-    for (size_t i=0; i<GetWordSize(); ++i) {
+    for (size_t i=0; i<ws; ++i) {
         switch(hres[i]) {
         case res_matched: if (word[i] != hword[i])         return false; break;
         case res_missing: if (word.find(hword[i]) != npos) return false; break;
-        case res_mislaid: if (word[i] == hword[i])         return false; break;
+        case res_mislaid:
+            // Letter can't be in this spot...
+            if (word[i] == hword[i])
+                return false;
+            // ...but must be in the word
+            for (c=0; (c < ws) && ((word[c] != hword[i]) || (c == i)); ++c);
+            if (c == ws)
+                return false;
+            break;
         default: break;
         }
     }

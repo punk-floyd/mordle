@@ -4,6 +4,24 @@ Mordle is a terminal-based [Wordle](https://www.nytimes.com/games/wordle/index.h
 
 Mordle is written in C++ (C++20) and was developed as an excuse to play with CMake and the [{fmt}](https://fmt.dev/latest/index.html) formatting library. The code is platform agnostic and should run on anything that both CMake and fmt support. It's been tested on both Linux and Windows so far. I don't need this tool to solve my Wordle puzzles. :)
 
+## Cloning and Building
+
+```
+# We're using fmt library as a submodule, so include --recurse-submodules option
+git clone --recurse-submodules https://github.com/punk-floyd/mordle.git
+cd mordle
+
+# Out of source build
+mkdir build
+cd build
+
+# Setup build environment
+cmake ..
+
+# Build the software
+make
+```
+
 ## Playing the Game
 
 By default, running mordle will start a game with the secret word chosen from an interal list of ~2300 5-letter words. The game supports taking an external list of words to be used by the game, and it supports words of arbitrary length.

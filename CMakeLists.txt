@@ -11,3 +11,5 @@ add_executable(mordle main.cpp Mordle.cpp word_list.cpp)
 add_subdirectory(fmt)
 find_package(fmt)
 target_link_libraries(mordle fmt::fmt)
+
+add_dependencies(mordle fmt)
