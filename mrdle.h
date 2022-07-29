@@ -1,13 +1,13 @@
 /**
- * @file    Mordle.h
+ * @file    mrdle.h
  * @author  Mike DeKoker (dekoker.mike@gmail.com)
- * @brief   Declares Mordle; a terminal-based Wordle clone and solver
+ * @brief   Declares mrdle; a terminal-based Wordle clone and solver
  *
  * @copyright Copyright (c) 2022 Mike DeKoker
  *
  */
-#ifndef swordle__header_included
-#define swordle__header_included
+#ifndef mrdle__header_included
+#define mrdle__header_included
 
 #include <string_view>
 #include <cstdint>
@@ -15,7 +15,7 @@
 #include <string>
 #include <random>
 
-class Mordle {
+class mrdle {
 public:
 
     /// First item is a guessed word, second item is response string for that guess
@@ -26,7 +26,7 @@ public:
     // -- Construction
 
     /// Construct from a path to a word list file
-    Mordle(const std::string_view word_file = "");
+    mrdle(const std::string_view word_file = "");
 
     // -- Methods
 
@@ -100,4 +100,4 @@ private:
 };
 
 
-#endif // ifndef swordle__header_included
+#endif // ifndef mrdle__header_included

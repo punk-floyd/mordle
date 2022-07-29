@@ -1,7 +1,7 @@
 /**
- * @file    Mordle.cpp
+ * @file    mrdle.cpp
  * @author  Mike DeKoker (dekoker.mike@gmail.com)
- * @brief   Implements Mordle; a terminal-based Wordle clone and solver
+ * @brief   Implements mrdle; a terminal-based Wordle clone and solver
  *
  * @copyright Copyright (c) 2022 Mike DeKoker
  *
@@ -15,10 +15,10 @@
 #include <fstream>
 #include <map>
 
-#include "Mordle.h"
+#include "mrdle.h"
 #include "util.h"
 
-Mordle::Mordle(const std::string_view word_file)
+mrdle::mrdle(const std::string_view word_file)
     : m_prng_gen(std::random_device()())
 {
     if (word_file.empty())
@@ -28,7 +28,7 @@ Mordle::Mordle(const std::string_view word_file)
 }
 
 /// Initialize word list from a file
-void Mordle::InitWordListFile(std::string_view word_file)
+void mrdle::InitWordListFile(std::string_view word_file)
 {
     constexpr size_t alloc_chunk = 25;
 
@@ -36,7 +36,7 @@ void Mordle::InitWordListFile(std::string_view word_file)
 
     std::ifstream ifs{std::string(word_file)};
     if (!ifs.is_open()) {
-        fmt::print(std::cerr, "wordle: Failed to open word file: {}\n", word_file);
+        fmt::print(std::cerr, "mrdle: Failed to open word file: {}\n", word_file);
         return;
     }
 
@@ -77,7 +77,7 @@ extern std::string_view default_words_blob;
 extern size_t           default_word_size;
 
 /// Initialize word list from internal word list
-void Mordle::InitWordListInternal()
+void mrdle::InitWordListInternal()
 {
     // The default word blob is just a blob of words with all whitespace
     // removed. Since we know the word length, it's easy to pull them out
@@ -91,14 +91,14 @@ void Mordle::InitWordListInternal()
         m_words[i].assign(default_words_blob.substr(idx, default_word_size));
 }
 
-const std::string& Mordle::GetRandomWord() const
+const std::string& mrdle::GetRandomWord() const
 {
     std::uniform_int_distribution<size_t> dist(0, m_words.size() - 1);
     return m_words[dist(GetPrngGenerator())];
 }
 
 /// Returns true if given word is in the word list
-bool Mordle::IsWordInList(const std::string& word) const
+bool mrdle::IsWordInList(const std::string& word) const
 {
     // Our list is sorted; use a binary search to find it
     auto it = std::lower_bound(m_words.begin(), m_words.end(), word);
@@ -119,7 +119,7 @@ bool Mordle::IsWordInList(const std::string& word) const
  *
  * @return Returns true if guess_word is a valid word
  */
-bool Mordle::CheckWordGuess(const std::string& secret_word,
+bool mrdle::CheckWordGuess(const std::string& secret_word,
     const std::string& guess_word, std::string& result)
 {
     if (!IsWordInList(guess_word))
@@ -161,7 +161,7 @@ bool Mordle::CheckWordGuess(const std::string& secret_word,
 }
 
 /// Play a game of wordle in the current terminal
-bool Mordle::TerminalPlay(std::string secret_word)
+bool mrdle::TerminalPlay(std::string secret_word)
 {
     constexpr int max_guesses = 6;
     int guess_number = 1;
@@ -214,14 +214,14 @@ bool Mordle::TerminalPlay(std::string secret_word)
 static fmt::color GetResFormatColor(char res)
 {
     switch(res) {
-        case Mordle::res_matched: return static_cast<fmt::color>(Mordle::color_matched); break;
-        case Mordle::res_mislaid: return static_cast<fmt::color>(Mordle::color_mislaid); break;
-        case Mordle::res_missing: return static_cast<fmt::color>(Mordle::color_missing); break;
+        case mrdle::res_matched: return static_cast<fmt::color>(mrdle::color_matched); break;
+        case mrdle::res_mislaid: return static_cast<fmt::color>(mrdle::color_mislaid); break;
+        case mrdle::res_missing: return static_cast<fmt::color>(mrdle::color_missing); break;
         default : return fmt::color::white;
     }
 }
 
-void Mordle::DisplayGuessResult(const std::string& guess, const std::string& result,
+void mrdle::DisplayGuessResult(const std::string& guess, const std::string& result,
     const GameCharMap& cmap)
 {
     // Padding between hint and char map
@@ -285,7 +285,7 @@ void Mordle::DisplayGuessResult(const std::string& guess, const std::string& res
 }
 
 /// Returns the string to use when player wins
-std::string_view Mordle::GetWinExclamatory(int guess_count) const
+std::string_view mrdle::GetWinExclamatory(int guess_count) const
 {
     switch (guess_count) {
     case 1:  return("Genius!\n"); break;
@@ -299,7 +299,7 @@ std::string_view Mordle::GetWinExclamatory(int guess_count) const
 }
 
 /// Returns the string to use when player loses
-std::string_view Mordle::GetLoseInsult() const
+std::string_view mrdle::GetLoseInsult() const
 {
     std::uniform_int_distribution dist(0, 25);
 
@@ -316,7 +316,7 @@ std::string_view Mordle::GetLoseInsult() const
 }
 
 /// List words with optional hints to filter output
-int Mordle::ListWords(const HintVect& hints)
+int mrdle::ListWords(const HintVect& hints)
 {
     // Validate hints
 
@@ -369,7 +369,7 @@ int Mordle::ListWords(const HintVect& hints)
 }
 
 // Determine if a word is a possible solution given a hint
-bool Mordle::CheckWordAgainstHint(const std::string& word, const HintPair& hint)
+bool mrdle::CheckWordAgainstHint(const std::string& word, const HintPair& hint)
 {
     size_t c, ws = GetWordSize();
 

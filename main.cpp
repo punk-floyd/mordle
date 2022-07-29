@@ -1,6 +1,6 @@
 /**
  * @file    main.cpp
- * @author  DeKoker (dekoker.mike@gmail.com)
+ * @author  Mike DeKoker (dekoker.mike@gmail.com)
  * @brief   Program entry point and command line processing
  *
  * @copyright Copyright (c) 2022
@@ -13,10 +13,10 @@
 #include <stdexcept>
 #include <iostream>
 #include <map>
-#include "Mordle.h"
+#include "mrdle.h"
 #include "util.h"
 
-static constexpr std::string_view program_version("0.2");
+static constexpr std::string_view program_version("0.3");
 
 /// Program options data
 struct ProgOpts {
@@ -32,7 +32,7 @@ struct ProgOpts {
     std::string         secret_word;            ///< --secret-word
     std::string         word_file;              ///< --word-file
 
-    Mordle::HintVect    hint_vect;              ///< --hint
+    mrdle::HintVect     hint_vect;              ///< --hint
 };
 
 static int ProcessCommandLine(int argc, char* argv[], ProgOpts& opts);
@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
         if ((argc > 1) && ProcessCommandLine(argc, argv, opts))
             return -1;
 
-        // Handle options that do not require a Mordle instance
+        // Handle options that do not require a mrdle instance
         if (opts.version)
             return DisplayVersion(opts);
         if (opts.help)
@@ -59,8 +59,8 @@ int main(int argc, char* argv[])
         if (opts.player_stats)
             return DisplayPlayerStats(opts);
 
-        // Instantiate the Mordle object
-        Mordle ws(opts.word_file);
+        // Instantiate the mrdle object
+        mrdle ws(opts.word_file);
         if (0 == ws.GetWordListCount()) {
             // Something failed; should have been reported
             return 1;
@@ -73,7 +73,7 @@ int main(int argc, char* argv[])
         // Validate secret word length if necessary
         auto swl = opts.secret_word.length();
         if (swl && swl != ws.GetWordSize()) {
-            fmt::print(std::cerr, "mordle: Invalid secret word length\n");
+            fmt::print(std::cerr, "mrdle: Invalid secret word length\n");
             return 1;
         }
 
@@ -112,7 +112,7 @@ int ProcessCommandLine(int argc, char* argv[], ProgOpts& opts)
         // Verify basic argument shape: --foo
         std::string_view arg(argv[a]);
         if ((arg.length() < 3) || (!arg.starts_with("--"))) {
-            fmt::print(std::cerr, "mordle: Invalid argument: {}\n", arg);
+            fmt::print(std::cerr, "mrdle: Invalid argument: {}\n", arg);
             return -1;
         }
         arg.remove_prefix(2);       // Remove the leading "--"
@@ -130,7 +130,7 @@ int ProcessCommandLine(int argc, char* argv[], ProgOpts& opts)
 
             // Make sure we have the argument value; value validated later
             if (a + 1 >= argc) {
-                fmt::print(std::cerr, "mordle: Missing required value for argument: {}\n", arg);
+                fmt::print(std::cerr, "mrdle: Missing required value for argument: {}\n", arg);
                 return -1;
             }
 
@@ -143,7 +143,7 @@ int ProcessCommandLine(int argc, char* argv[], ProgOpts& opts)
 
             // Make sure we have the argument values; values validated later
             if (a + 2 >= argc) {
-                fmt::print(std::cerr, "mordle: Missing required value for argument: {}\n", arg);
+                fmt::print(std::cerr, "mrdle: Missing required value for argument: {}\n", arg);
                 return -1;
             }
 
@@ -153,7 +153,7 @@ int ProcessCommandLine(int argc, char* argv[], ProgOpts& opts)
             continue;
         }
 
-        fmt::print(std::cerr, "mordle: Unknown argument: {}\n", arg);
+        fmt::print(std::cerr, "mrdle: Unknown argument: {}\n", arg);
         return -1;
     }
 
@@ -167,13 +167,13 @@ int ProcessCommandLine(int argc, char* argv[], ProgOpts& opts)
 
 static int DisplayVersion(const ProgOpts& opts)
 {
-    constexpr std::string_view prog_name("mordle");
+    constexpr std::string_view prog_name("mrdle");
 
     if (opts.no_color)
         fmt::print("{}\n", prog_name);
     else {
-        auto c1 = static_cast<fmt::color>(Mordle::color_matched);
-        auto c2 = static_cast<fmt::color>(Mordle::color_missing);
+        auto c1 = static_cast<fmt::color>(mrdle::color_matched);
+        auto c2 = static_cast<fmt::color>(mrdle::color_missing);
         for (size_t i = 0; i<prog_name.length(); ++i) {
             fmt::color c;
             switch(prog_name[i]) {
@@ -193,18 +193,18 @@ static int DisplayVersion(const ProgOpts& opts)
 
 static int DisplayHelp(const ProgOpts& opts)
 {
-    fmt::print("mordle: MOOMOO: Display help\n");
+    fmt::print("mrdle: MOOMOO: Display help\n");
     return 0;
 }
 
 static int DisplayRules(const ProgOpts& opts)
 {
-    fmt::print("mordle: MOOMOO: Display rules\n");
+    fmt::print("mrdle: MOOMOO: Display rules\n");
     return 0;
 }
 
 static int DisplayPlayerStats(const ProgOpts& opts)
 {
-    fmt::print("mordle: MOOMOO: Display player stats\n");
+    fmt::print("mrdle: MOOMOO: Display player stats\n");
     return 0;
 }
