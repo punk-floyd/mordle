@@ -193,7 +193,32 @@ static int DisplayVersion(const ProgOpts& opts)
 
 static int DisplayHelp(const ProgOpts& opts)
 {
-    fmt::print("mrdle: MOOMOO: Display help\n");
+    static constexpr std::string_view name("mrdle");
+
+    fmt::print("{}: Wordle clone and solution helper\n", name);
+    fmt::print("Usage: {} [ACTION] [OPTIONS...]\n", name);
+
+    fmt::print("\nActions:\n");
+    fmt::print("  --play              Shall we play a game? (default action)\n");
+    fmt::print("  --list              List words from word list (see --hint)\n");
+    fmt::print("  --rules             Display game rules and exit\n");
+  //fmt::print("  --player-stats      Display stats for the current user\n");
+    fmt::print("\n");
+    fmt::print("Game options:\n");
+    fmt::print("  --secret-word WORD  Uses WORD as the secret word.\n");
+    fmt::print("List words options:\n");
+    fmt::print("  --hint WORD HINT    Implies --list. Filters listed words by excluding words\n");
+    fmt::print("                      that do not satisfy the game hint. WORD is a word that\n");
+    fmt::print("                      was played and HINT is the encoded results of that word\n");
+    fmt::print("                      See Finding Solutions below.\n");
+    fmt::print("Common options:\n");
+    fmt::print("  --word-file FILE    Use words listed in FILE. Words can be of any length\n");
+    fmt::print("                      but they must all be the same length.\n");
+    fmt::print("  --no-color          Do not use colored output\n");
+    fmt::print("  --version           Display version information and exit\n");
+    fmt::print("  --help              Display usage information and exit\n");
+    fmt::print("\n");
+
     return 0;
 }
 
