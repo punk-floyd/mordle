@@ -201,7 +201,7 @@ static int DisplayHelp(const ProgOpts& opts)
     fmt::print("\nActions:\n");
     fmt::print("  --play              Shall we play a game? (default action)\n");
     fmt::print("  --list              List words from word list (see --hint)\n");
-    fmt::print("  --rules             Display game rules and exit\n");
+  //fmt::print("  --rules             Display game rules and exit\n");
   //fmt::print("  --player-stats      Display stats for the current user\n");
     fmt::print("\n");
     fmt::print("Game options:\n");
@@ -217,6 +217,26 @@ static int DisplayHelp(const ProgOpts& opts)
     fmt::print("  --no-color          Do not use colored output\n");
     fmt::print("  --version           Display version information and exit\n");
     fmt::print("  --help              Display usage information and exit\n");
+    fmt::print("\nFinding solutions:\n");
+    fmt::print("mrdle can be used to find possible game solutions by analyzing the word\n");
+    fmt::print("list against game hints. This is done by running the program with the\n");
+    fmt::print("`--hint` command line option.\n");
+    fmt::print("\n");
+    fmt::print("It's used like this: --hint WORD HINT\n");
+    fmt::print("  - WORD is a guessed word.\n");
+    fmt::print("  - HINT is a string that encodes the resulting game clue when WORD is\n");
+    fmt::print("    guessed.\n");
+    fmt::print("      - '!' means that the character is in the secret word and in the\n");
+    fmt::print("        right spot (i.e., a green letter)\n");
+    fmt::print("      - '~' means that the character is in the secret word but in the\n");
+    fmt::print("        wrong spot (i.e., a yellow letter)\n");
+    fmt::print("      - 'x' means that the character is not in the secret word (i.e., a\n");
+    fmt::print("         gray letter)\n");
+    fmt::print("\n");
+    fmt::print("The more hints you provide on the command line, the more refined the output\n");
+    fmt::print("will be:\n");
+    fmt::print("$mrdle --hint arise 'x~x~~' --hint route '!x~x~' --hint rules '!~x~!'\n");
+    fmt::print("rebus\n");
     fmt::print("\n");
 
     return 0;

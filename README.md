@@ -6,7 +6,7 @@ mrdle is written in C++ (C++20) and was developed as an excuse to play with CMak
 
 ## Cloning and Building
 
-```
+```shell
 # We're using fmt library as a submodule, so include --recurse-submodules option
 git clone --recurse-submodules https://github.com/punk-floyd/mrdle.git
 cd mrdle
@@ -53,7 +53,7 @@ The third hint would be encoded as:  `--hint rules !~x~!`.<br>
 
 The more hints you provide on the command line, the more refined the output will be:
 
-```
+```shell
     $mrdle --hint arise x~x~~ --hint route !x~x~ --hint rules !~x~!
     rebus
 ```
