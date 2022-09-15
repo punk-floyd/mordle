@@ -14,6 +14,7 @@
 #include <iostream>
 #include <map>
 #include "mrdle.h"
+#include "PlayerStats.h"
 #include "util.h"
 
 static constexpr std::string_view program_version("0.3");
@@ -202,7 +203,7 @@ static int DisplayHelp(const ProgOpts& opts)
     fmt::print("  --play              Shall we play a game? (default action)\n");
     fmt::print("  --list              List words from word list (see --hint)\n");
   //fmt::print("  --rules             Display game rules and exit\n");
-  //fmt::print("  --player-stats      Display stats for the current user\n");
+    fmt::print("  --player-stats      Display stats for the current user\n");
     fmt::print("\n");
     fmt::print("Game options:\n");
     fmt::print("  --secret-word WORD  Uses WORD as the secret word.\n");
@@ -250,6 +251,10 @@ static int DisplayRules(const ProgOpts& opts)
 
 static int DisplayPlayerStats(const ProgOpts& opts)
 {
-    fmt::print("mrdle: MOOMOO: Display player stats\n");
+    PlayerStats ps;
+
+    if (0 == ps.Load())
+        ps.Report();
+
     return 0;
 }

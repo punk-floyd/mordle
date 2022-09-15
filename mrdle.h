@@ -14,6 +14,7 @@
 #include <vector>
 #include <string>
 #include <random>
+#include <map>
 
 class mrdle {
 public:

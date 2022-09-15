@@ -5,7 +5,7 @@ project(mrdle)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-add_executable(mrdle main.cpp mrdle.cpp word_list.cpp)
+add_executable(mrdle main.cpp mrdle.cpp PlayerStats.cpp word_list.cpp)
 
 # https://fmt.dev/latest/index.html
 add_subdirectory(fmt)
