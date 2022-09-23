@@ -230,8 +230,8 @@ static int DisplayHelp(const ProgOpts& opts)
     fmt::print("        right spot (i.e., a green letter)\n");
     fmt::print("      - '~' means that the character is in the secret word but in the\n");
     fmt::print("        wrong spot (i.e., a yellow letter)\n");
-    fmt::print("      - 'x' means that the character is not in the secret word (i.e., a\n");
-    fmt::print("         gray letter)\n");
+    fmt::print("      - 'x' means that the character is not in the unmatched portion\n");
+    fmt::print("         of the secret word (i.e., a gray letter)\n");
     fmt::print("\n");
     fmt::print("The more hints you provide on the command line, the more refined the output\n");
     fmt::print("will be:\n");

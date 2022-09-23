@@ -380,7 +380,13 @@ bool mrdle::CheckWordAgainstHint(const std::string& word, const HintPair& hint)
     for (size_t i=0; i<ws; ++i) {
         switch(hres[i]) {
         case res_matched: if (word[i] != hword[i])         return false; break;
-        case res_missing: if (word.find(hword[i]) != npos) return false; break;
+        case res_missing:
+            // Letter cannot be in *unmatched portion of* word
+            for (c = 0; c < ws; ++c) {
+                if ((word[c] == hword[i]) && (hres[c] != res_matched))
+                    return false;
+            }
+            break;
         case res_mislaid:
             // Letter can't be in this spot...
             if (word[i] == hword[i])
