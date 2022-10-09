@@ -1,22 +1,23 @@
+#include <system_error>
 #include <fmt/format.h>
 #include <fmt/ostream.h>
 #include <fmt/chrono.h>
 #include <fmt/color.h>
+#include <filesystem>
 #include <fstream>
+#include <sstream>
 #include <chrono>
 #include <vector>
 
 #include "PlayerStats.h"
 #include "mrdle.h"
-
-std::string PlayerStats::GeneratePathname() const
-{
-    //return std::string("c:\\tmp\\dev_stats.txt");
-    return std::string("/home/mike/sw/mike/mrdle/build/dev_stats.txt");
-}
+#include "os.h"
 
 int PlayerStats::Save() const
 {
+    if (int res = EnsureStatsDir())
+        return res;
+
     std::ofstream ofs(GeneratePathname());
     if (!ofs.is_open())
         return -1;
@@ -54,7 +55,7 @@ void PlayerStats::Attempt()
     m_play_count++;
 }
 
-void PlayerStats::Win(size_t guesses)
+int PlayerStats::Win(size_t guesses, bool save)
 {
     auto now = std::chrono::system_clock::now();
     m_last_win = std::chrono::system_clock::to_time_t(now);
@@ -67,11 +68,15 @@ void PlayerStats::Win(size_t guesses)
     // Index N contains the number of wins in N+1 guesses
     if (guesses && ((guesses - 1) < m_guess.size()))
         m_guess[guesses - 1]++;
+
+    return save ? Save() : 0;
 }
 
-void PlayerStats::Lose()
+int PlayerStats::Lose(bool save)
 {
     m_cur_streak = 0;
+
+    return save ? Save() : 0;
 }
 
 void PlayerStats::Report(bool no_color, size_t guess_highlight) const
@@ -125,4 +130,46 @@ void PlayerStats::Report(bool no_color, size_t guess_highlight) const
 
         idx++;
     }
+}
+
+/// Returns directory to use for stats, or empty string
+std::string PlayerStats::GetStatsDirectory() const
+{
+    std::string stat_dir(GetUserHomeDirectory());
+    if (!stat_dir.empty())
+        stat_dir.append("/.mrdle");
+
+    return stat_dir;
+}
+
+std::string PlayerStats::GeneratePathname() const
+{
+    std::string pn(GetStatsDirectory());
+    if (pn.empty())
+        return pn;
+
+    // File name: stats[-name].word_size.max_guesses
+    std::ostringstream oss;
+    oss << pn << "/stats";
+    if  (!m_name.empty())
+        oss << '-' << m_name;
+    oss << '.' << m_word_size << '.' << m_guess.size();
+
+    //return std::string("c:\\tmp\\dev_stats.txt");
+    return std::string(oss.str());
+}
+
+/// Ensures stats directory exists, creating if necessary
+int PlayerStats::EnsureStatsDir() const
+{
+    std::string stat_dir(GetStatsDirectory());
+    if (stat_dir.empty())
+        return -1;
+
+    std::error_code ec;
+    if (std::filesystem::exists(stat_dir, ec) && !ec)
+        return 0;   // Directory exists
+
+    // Directory does not exist. Create it.
+    return std::filesystem::create_directory(stat_dir, ec) && !ec;
 }

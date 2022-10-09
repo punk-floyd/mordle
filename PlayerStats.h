@@ -28,9 +28,9 @@ public:
     /// Add a new game attempt to player stats
     void Attempt();
     /// Update stats for a win
-    void Win(size_t guesses);
+    int Win(size_t guesses, bool save = true);
     /// Update stats for a loss
-    void Lose();
+    int Lose(bool save = true);
 
 protected:
 
@@ -38,6 +38,10 @@ protected:
 
     /// Returns the pathname to use for the stats file
     std::string GeneratePathname() const;
+    /// Returns directory to use for stats, or empty string
+    std::string GetStatsDirectory() const;
+    /// Ensures stats directory exists, creating if necessary
+    int EnsureStatsDir() const;
 
 private:
 

@@ -16,6 +16,7 @@
 #include <map>
 
 #include "mrdle.h"
+#include "PlayerStats.h"
 #include "util.h"
 
 mrdle::mrdle(const std::string_view word_file)
@@ -166,6 +167,11 @@ bool mrdle::TerminalPlay(std::string secret_word)
     constexpr int max_guesses = 6;
     int guess_number = 1;
 
+    PlayerStats p_stats("", GetWordSize(), max_guesses);
+    p_stats.Load();
+    p_stats.Attempt();
+    p_stats.Save();
+
     // Map an alphabet character to its state (res_*)
     GameCharMap char_map;
 
@@ -200,10 +206,14 @@ bool mrdle::TerminalPlay(std::string secret_word)
         // Are we done?
         if (guess.compare(secret_word) == 0) {
             fmt::print("{}\n", GetWinExclamatory(guess_number));
+            p_stats.Win(guess_number);
+            p_stats.Report(m_no_color, guess_number);
             return true;
         }
         if (++guess_number > max_guesses) {
             fmt::print("{}\nThe word was: {}\n", GetLoseInsult(), secret_word);
+            p_stats.Lose();
+            p_stats.Report(m_no_color);
             return false;
         }
     }
